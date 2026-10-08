@@ -126,6 +126,13 @@ attribute.
 - Keep frames under about 500 ms for compatibility with a real IR Toy.
 - One transmit at a time per stick; concurrent calls queue.
 
+## Verified
+
+2026-10-07, HAOS 15.2 on ODROID-C4, HA 2025.9.1, RP2040-One stick, firmware V222:
+`rc6_mce` VOLUME_UP pulse text sent at 36000 Hz through `fire_blaster.send_ir`
+decoded as scancode `0x800f0410` (`KEY_VOLUMEUP`) on an `mceusb` receiver,
+110 of 110 frames.
+
 ## Development
 
 ```bash
