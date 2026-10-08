@@ -1,0 +1,56 @@
+{
+  "config": {
+    "flow_title": "{name} ({port})",
+    "step": {
+      "user": {
+        "title": "fire-blaster IR blaster",
+        "description": "Pick the serial port of the IR stick. The /dev/serial/by-id path is preferred because it survives replugs.",
+        "data": {
+          "port": "Serial port",
+          "manual_port": "Or type a port path"
+        }
+      },
+      "usb_confirm": {
+        "title": "IR blaster found",
+        "description": "Set up {name} on {port}? Device reports {version}."
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not open the serial port. Check that the stick is plugged in and the path is right.",
+      "not_ir_toy": "The device on that port did not answer like an IR Toy (bad version reply or firmware older than v20).",
+      "kernel_ir_toy": "This host's kernel has the ir_toy driver, which claimed the stick as a LIRC device, so no serial port appears. This integration only supports the serial (CDC ACM) mode; use the LIRC device another way.",
+      "no_port": "Choose a port or type a path."
+    },
+    "abort": {
+      "already_configured": "This IR blaster is already configured.",
+      "cannot_connect": "Could not open the discovered IR blaster."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "fire-blaster IR options",
+        "data": {
+          "carrier": "Default carrier (Hz) for pulse-text codes",
+          "profiles_dir": "Profiles directory (absolute, or relative to /config)"
+        }
+      }
+    }
+  },
+  "services": {
+    "send_ir": {
+      "name": "Send IR code",
+      "description": "Send one IR code (Pronto hex or ir-ctl pulse text) through an IR blaster.",
+      "fields": {
+        "code": { "name": "Code", "description": "Pronto hex or pulse text." },
+        "carrier": { "name": "Carrier (Hz)", "description": "Carrier frequency; default is the entity option or the Pronto code's frequency." },
+        "repeat": { "name": "Repeat", "description": "How many times to send the frame." },
+        "delay": { "name": "Delay (s)", "description": "Pause between repeats." }
+      }
+    },
+    "reload_profiles": {
+      "name": "Reload profiles",
+      "description": "Re-read the fire-blaster profile TOML files."
+    }
+  }
+}

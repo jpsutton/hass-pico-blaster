@@ -1,0 +1,49 @@
+send_ir:
+  name: Send IR code
+  description: Send one IR code (Pronto hex or ir-ctl pulse text) through an IR blaster.
+  target:
+    entity:
+      domain: remote
+      integration: fire_blaster
+  fields:
+    code:
+      name: Code
+      description: Pronto hex ("0000 006D 0022 0002 ...") or pulse text ("+9000 -4500 +560 ...").
+      required: true
+      example: "+9000 -4500 +560 -560 +560"
+      selector:
+        text:
+          multiline: true
+    carrier:
+      name: Carrier (Hz)
+      description: Carrier frequency. Default is the entity option (38000) for pulse text, or the Pronto code's own frequency.
+      example: 38000
+      selector:
+        number:
+          min: 11800
+          max: 1000000
+          step: 1
+          mode: box
+          unit_of_measurement: Hz
+    repeat:
+      name: Repeat
+      description: How many times to send the frame.
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 50
+    delay:
+      name: Delay (s)
+      description: Pause between repeats, in seconds.
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 10
+          step: 0.01
+          unit_of_measurement: s
+
+reload_profiles:
+  name: Reload profiles
+  description: Re-read the fire-blaster profile TOML files from the profiles directory.

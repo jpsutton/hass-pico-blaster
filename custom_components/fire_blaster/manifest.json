@@ -1,0 +1,14 @@
+{
+  "domain": "fire_blaster",
+  "name": "fire-blaster IR",
+  "codeowners": ["@jpsutton"],
+  "config_flow": true,
+  "dependencies": ["usb"],
+  "documentation": "https://github.com/jpsutton/hass-fire-blaster",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/jpsutton/hass-fire-blaster/issues",
+  "requirements": ["pyserial-asyncio-fast>=0.13", "pyserial>=3.5"],
+  "usb": [{ "vid": "04D8", "pid": "FD08" }],
+  "version": "0.1.0"
+}
