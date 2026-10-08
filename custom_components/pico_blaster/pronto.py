@@ -1,5 +1,5 @@
-# Vendored from fire-blaster (https://github.com/jpsutton/fire-blaster),
-# src/fireblaster/pronto.py. Copyright (c) Jared Sutton. MIT License.
+# Copyright (c) Jared Sutton. MIT License.
+# Shared with the author's fire-blaster firmware project (same code, same license).
 """Pronto hex <-> pulse/space conversion.
 
 A learned Pronto code is a list of 16-bit hex words:

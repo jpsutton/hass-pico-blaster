@@ -2,8 +2,8 @@ import asyncio
 
 import pytest
 
-from custom_components.fire_blaster import irtoy
-from custom_components.fire_blaster.irtoy import IrToy, IrToyOverflow, IrToyProtocolError, IrToyTimeout
+from custom_components.pico_blaster import irtoy
+from custom_components.pico_blaster.irtoy import IrToy, IrToyOverflow, IrToyProtocolError, IrToyTimeout
 
 from .fake_irtoy import FakeIrToy, make_pair
 

@@ -99,7 +99,7 @@ async def _validate(hass: HomeAssistant, port: str) -> str:
     return version
 
 
-class FireBlasterConfigFlow(ConfigFlow, domain=DOMAIN):
+class PicoBlasterConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self) -> None:
@@ -110,21 +110,21 @@ class FireBlasterConfigFlow(ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> FireBlasterOptionsFlow:
-        return FireBlasterOptionsFlow()
+    def async_get_options_flow(config_entry: ConfigEntry) -> PicoBlasterOptionsFlow:
+        return PicoBlasterOptionsFlow()
 
     # -- USB discovery -----------------------------------------------------
 
     async def async_step_usb(self, discovery_info: UsbServiceInfo) -> ConfigFlowResult:
-        self._port = usb.get_serial_by_id(discovery_info.device)
+        self._port = await self.hass.async_add_executor_job(usb.get_serial_by_id, discovery_info.device)
         self._serial = discovery_info.serial_number
         unique_id = self._serial or self._port
         await self.async_set_unique_id(unique_id)
         self._abort_if_unique_id_configured(updates={CONF_PORT: self._port})
 
         manufacturer = discovery_info.manufacturer or ""
-        is_fire_blaster = "fire-blaster" in manufacturer.lower()
-        self._title = "fire-blaster IR" if is_fire_blaster else "USB IR Toy"
+        is_pico_blaster = "fire-blaster" in manufacturer.lower()  # USB manufacturer string set by the firmware
+        self._title = "Pico Blaster" if is_pico_blaster else "USB IR Toy"
         if self._serial:
             self._title += f" {self._serial[-4:]}"
 
@@ -191,7 +191,7 @@ class FireBlasterConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
 
-class FireBlasterOptionsFlow(OptionsFlow):
+class PicoBlasterOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             return self.async_create_entry(data=user_input)

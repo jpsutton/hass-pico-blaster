@@ -1,6 +1,6 @@
 """Host side of the USB IR Toy v2 "sampling mode" transmit protocol.
 
-Speaks to a fire-blaster Pico IR stick (or a real IR Toy, firmware v20+)
+Speaks to a Pico Blaster IR stick (or a real IR Toy, firmware v20+)
 over a CDC ACM serial port. Mirrors the command sequence the Linux `ir_toy`
 driver uses so both devices behave the same.
 

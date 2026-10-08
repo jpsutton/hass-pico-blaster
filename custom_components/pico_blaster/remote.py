@@ -22,9 +22,9 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import FireBlasterConfigEntry
+from . import PicoBlasterConfigEntry
 from .const import ATTR_CARRIER, ATTR_CODE, ATTR_DELAY, ATTR_REPEAT, CONF_SERIAL_NUMBER, DOMAIN, SERVICE_SEND_IR
-from .device import FireBlasterDevice, ProfileSendError, SendError, parse_code
+from .device import PicoBlasterDevice, ProfileSendError, SendError, parse_code
 from .irtoy import MIN_CARRIER_HZ
 from .pronto import ProntoError
 
@@ -39,14 +39,14 @@ SEND_IR_SCHEMA = {
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: FireBlasterConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: PicoBlasterConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    async_add_entities([FireBlasterRemote(entry)])
+    async_add_entities([PicoBlasterRemote(entry)])
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(SERVICE_SEND_IR, SEND_IR_SCHEMA, "async_send_ir")
 
 
-class FireBlasterRemote(RemoteEntity):
+class PicoBlasterRemote(RemoteEntity):
     _attr_has_entity_name = True
     _attr_name = None
     _attr_should_poll = False
@@ -54,14 +54,14 @@ class FireBlasterRemote(RemoteEntity):
     _attr_is_on = True
     _attr_assumed_state = True
 
-    def __init__(self, entry: FireBlasterConfigEntry) -> None:
-        self._device: FireBlasterDevice = entry.runtime_data
+    def __init__(self, entry: PicoBlasterConfigEntry) -> None:
+        self._device: PicoBlasterDevice = entry.runtime_data
         self._attr_unique_id = entry.unique_id or entry.entry_id
         serial = entry.data.get(CONF_SERIAL_NUMBER)
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._attr_unique_id)},
             name=entry.title,
-            manufacturer="fire-blaster",
+            manufacturer="Pico Blaster",  # USB string on the stick reads "fire-blaster" (the firmware project)
             model="Pico IR stick (IR Toy compatible)",
             serial_number=serial,
             sw_version=self._device.version,
@@ -109,7 +109,7 @@ class FireBlasterRemote(RemoteEntity):
                 raise HomeAssistantError(str(err)) from err
 
     async def async_send_ir(self, code: str, carrier: int | None = None, repeat: int = 1, delay: float = 0.0) -> None:
-        """fire_blaster.send_ir entity service."""
+        """pico_blaster.send_ir entity service."""
         try:
             signal = parse_code(code, carrier or self._device.default_carrier)
         except ProntoError as err:

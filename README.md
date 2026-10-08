@@ -1,9 +1,9 @@
-# fire-blaster IR for Home Assistant
+# Pico Blaster for Home Assistant
 
-Home Assistant custom integration that sends infrared through a
-[fire-blaster](https://github.com/jpsutton/fire-blaster) Pico IR stick (or a
-real Dangerous Prototypes USB IR Toy, firmware v20 or newer) over its USB
-serial port.
+Home Assistant custom integration that sends infrared through a USB IR
+Toy compatible stick over its serial port. Built for an RP2040 (Raspberry Pi
+Pico) IR stick running IR Toy compatible firmware; a real Dangerous
+Prototypes USB IR Toy (firmware v20 or newer) works too.
 
 It exists for hosts whose kernel lacks the `ir_toy` driver, such as Home
 Assistant OS on an ODROID-C4. There the stick enumerates as a plain CDC ACM
@@ -13,9 +13,9 @@ serial port (`/dev/ttyACM0`), and this integration speaks the IR Toy
 ## Install
 
 With HACS: add this repository as a custom repository (type: Integration),
-install "fire-blaster IR", restart Home Assistant.
+install "Pico Blaster", restart Home Assistant.
 
-By hand: copy `custom_components/fire_blaster` into `/config/custom_components/`
+By hand: copy `custom_components/pico_blaster` into `/config/custom_components/`
 and restart.
 
 ## Setup
@@ -24,7 +24,7 @@ Plug the stick in. Home Assistant discovers it by USB id (`04D8:FD08`) and
 offers it under Settings → Devices & services → Discovered. Confirm, done.
 
 Or add it manually: Settings → Devices & services → Add integration →
-"fire-blaster IR", then pick the serial port. The `/dev/serial/by-id/...` path
+"Pico Blaster", then pick the serial port. The `/dev/serial/by-id/...` path
 is preferred; it survives replugs and reboots.
 
 The flow opens the port and checks the firmware version before creating the
@@ -37,7 +37,7 @@ Options (gear icon on the integration):
 | Option | Default | Meaning |
 |---|---|---|
 | Default carrier | 38000 Hz | Carrier for pulse-text codes (Pronto codes carry their own) |
-| Profiles directory | `fire_blaster/profiles` | Where profile TOML files live, relative to `/config` or absolute |
+| Profiles directory | `pico_blaster/profiles` | Where profile TOML files live, relative to `/config` or absolute |
 
 ## Entity
 
@@ -56,7 +56,7 @@ Each command string is one IR code:
 ```yaml
 action: remote.send_command
 target:
-  entity_id: remote.fire_blaster_ir
+  entity_id: remote.pico_blaster
 data:
   command: "+9000 -4500 +560 -560 +560"
   num_repeats: 3
@@ -69,20 +69,20 @@ name:
 ```yaml
 action: remote.send_command
 target:
-  entity_id: remote.fire_blaster_ir
+  entity_id: remote.pico_blaster
 data:
   device: denon-avr
   command: VOLUME_UP
 ```
 
-### `fire_blaster.send_ir`
+### `pico_blaster.send_ir`
 
 Same thing with explicit fields, for scripts and automations:
 
 ```yaml
-action: fire_blaster.send_ir
+action: pico_blaster.send_ir
 target:
-  entity_id: remote.fire_blaster_ir
+  entity_id: remote.pico_blaster
 data:
   code: "+2664 -888 +444 -444 ..."
   carrier: 36000
@@ -93,13 +93,13 @@ data:
 `carrier` overrides the default for pulse text and the embedded frequency for
 Pronto codes.
 
-### `fire_blaster.reload_profiles`
+### `pico_blaster.reload_profiles`
 
 Re-reads the profile directory without a restart.
 
 ## Profiles
 
-fire-blaster profile files are TOML, one per device:
+Profile files are TOML, one per device:
 
 ```toml
 id = "denon-avr"
@@ -112,26 +112,30 @@ VOLUME_UP = "+3450 -1600 +500 -300 ..."
 POWER_TOGGLE = ["0000 006D ...", "0000 006D ..."]   # toggle-bit variants alternate per press
 ```
 
-Put them under `/config/fire_blaster/profiles/` (or the configured directory).
+Function names follow the Amazon IR database convention (`VOLUME_UP`,
+`VOLUME_DOWN`, `MUTE_TOGGLE`, `POWER_TOGGLE`, `POWER_ON`, `POWER_OFF`, ...),
+but any name works.
+
+Put them under `/config/pico_blaster/profiles/` (or the configured directory).
 Every `*.toml` below that directory is loaded; later files override earlier
 ones with the same `id`. Loaded ids show up in the entity's `profiles`
 attribute.
 
 ## Limits
 
-- At most 2048 durations per frame (the firmware buffer); the entity drops a
+- At most 2048 durations per frame (the device buffer); the entity drops a
   trailing space and sleeps it after the frame instead.
 - Carrier at least 11800 Hz, quantized by the device's 8-bit timer (38000 Hz
-  is really 37974 Hz). Duty cycle is fixed at 33% by the firmware.
+  is really 37974 Hz). Duty cycle is fixed by the firmware.
 - Keep frames under about 500 ms for compatibility with a real IR Toy.
 - One transmit at a time per stick; concurrent calls queue.
 
 ## Verified
 
-2026-10-07, HAOS 15.2 on ODROID-C4, HA 2025.9.1, RP2040-One stick, firmware V222:
-`rc6_mce` VOLUME_UP pulse text sent at 36000 Hz through `fire_blaster.send_ir`
-decoded as scancode `0x800f0410` (`KEY_VOLUMEUP`) on an `mceusb` receiver,
-110 of 110 frames.
+2026-10-07, HAOS 15.2 on ODROID-C4, HA 2025.9.1, Waveshare RP2040-One stick,
+firmware V222: `rc6_mce` VOLUME_UP pulse text sent at 36000 Hz through
+`pico_blaster.send_ir` decoded as scancode `0x800f0410` (`KEY_VOLUMEUP`) on an
+`mceusb` receiver, 110 of 110 frames.
 
 ## Development
 
@@ -140,12 +144,10 @@ python -m venv .venv && .venv/bin/pip install pytest pytest-asyncio pyserial-asy
 .venv/bin/pytest
 ```
 
-The tests drive the protocol class against an in-process port of the
-firmware's state machine (`tests/fake_irtoy.py`). `tests/test_e2e_socat.py`
+The tests drive the protocol class against an in-process model of the
+device's state machine (`tests/fake_irtoy.py`). `tests/test_e2e_socat.py`
 runs the same thing across a real pty pair when `socat` is installed.
 Home Assistant itself is not needed for the tests.
-
-`pronto.py` and `profiles.py` are vendored from fire-blaster.
 
 ## License
 

@@ -1,6 +1,6 @@
 {
-  "domain": "fire_blaster",
-  "name": "fire-blaster IR",
+  "domain": "pico_blaster",
+  "name": "Pico Blaster",
   "codeowners": ["@jpsutton"],
   "config_flow": true,
   "dependencies": ["usb"],

@@ -1,4 +1,4 @@
-"""fire-blaster IR: send IR through a fire-blaster Pico IR stick (USB IR Toy compatible)."""
+"""Pico Blaster: send IR through a Pico Blaster IR stick (USB IR Toy compatible)."""
 
 from __future__ import annotations
 
@@ -19,13 +19,13 @@ from .const import (
     DOMAIN,
     SERVICE_RELOAD_PROFILES,
 )
-from .device import FireBlasterDevice
+from .device import PicoBlasterDevice
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [Platform.REMOTE]
 
-type FireBlasterConfigEntry = ConfigEntry[FireBlasterDevice]
+type PicoBlasterConfigEntry = ConfigEntry[PicoBlasterDevice]
 
 
 def _profiles_dir(hass: HomeAssistant, entry: ConfigEntry) -> Path:
@@ -36,8 +36,8 @@ def _profiles_dir(hass: HomeAssistant, entry: ConfigEntry) -> Path:
     return Path(hass.config.path(DEFAULT_PROFILES_SUBDIR))
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: FireBlasterConfigEntry) -> bool:
-    device = FireBlasterDevice(
+async def async_setup_entry(hass: HomeAssistant, entry: PicoBlasterConfigEntry) -> bool:
+    device = PicoBlasterDevice(
         port=entry.data[CONF_PORT],
         name=entry.title,
         carrier=int(entry.options.get(CONF_CARRIER, DEFAULT_CARRIER)),
@@ -60,7 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: FireBlasterConfigEntry) 
 
         async def _reload_profiles(call: ServiceCall) -> None:
             for e in hass.config_entries.async_loaded_entries(DOMAIN):
-                dev: FireBlasterDevice = e.runtime_data
+                dev: PicoBlasterDevice = e.runtime_data
                 n = await hass.async_add_executor_job(dev.load_profiles)
                 dev.notify()
                 _LOGGER.info("%s: reloaded %d profiles from %s", e.title, n, dev.profiles_dir)
@@ -74,7 +74,7 @@ async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry) -> Non
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: FireBlasterConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: PicoBlasterConfigEntry) -> bool:
     ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     await entry.runtime_data.close()
     if not hass.config_entries.async_loaded_entries(DOMAIN):

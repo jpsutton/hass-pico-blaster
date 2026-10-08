@@ -1,7 +1,7 @@
 """Owns one serial port: connects, reconnects with backoff, serializes sends.
 
 Also resolves what to send: raw Pronto hex / pulse text, or a function from
-a fire-blaster profile file (with toggle-bit variants alternated per press).
+a profile file (with toggle-bit variants alternated per press).
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ def parse_code(text: str, default_carrier: int) -> IrSignal:
     return decode(text)
 
 
-class FireBlasterDevice:
+class PicoBlasterDevice:
     def __init__(self, port: str, name: str, carrier: int = DEFAULT_CARRIER, profiles_dir: Path | None = None) -> None:
         self.port = port
         self.name = name

@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from custom_components.fire_blaster import pronto
-from custom_components.fire_blaster.device import FireBlasterDevice, ProfileSendError, SendError, parse_code
-from custom_components.fire_blaster.irtoy import IrToy
-from custom_components.fire_blaster.profiles import Profile, ProfileSet
+from custom_components.pico_blaster import pronto
+from custom_components.pico_blaster.device import PicoBlasterDevice, ProfileSendError, SendError, parse_code
+from custom_components.pico_blaster.irtoy import IrToy
+from custom_components.pico_blaster.profiles import Profile, ProfileSet
 
 from .fake_irtoy import FakeIrToy, make_pair
 
@@ -67,9 +67,9 @@ def test_profile_from_toml(tmp_path: Path):
     assert p.variants("MISSING") == ()
 
 
-async def make_device(tmp_path: Path | None = None) -> tuple[FakeIrToy, FireBlasterDevice]:
+async def make_device(tmp_path: Path | None = None) -> tuple[FakeIrToy, PicoBlasterDevice]:
     fake, reader, writer = make_pair()
-    dev = FireBlasterDevice("fake", "Fake", carrier=38000, profiles_dir=tmp_path)
+    dev = PicoBlasterDevice("fake", "Fake", carrier=38000, profiles_dir=tmp_path)
     dev.toy = IrToy(reader, writer, name="fake")
     await dev.toy.setup()
     dev.version = dev.toy.version
@@ -126,7 +126,7 @@ async def test_device_bad_code():
 
 
 async def test_device_not_connected():
-    dev = FireBlasterDevice("/dev/null", "x")
+    dev = PicoBlasterDevice("/dev/null", "x")
     assert not dev.available
     with pytest.raises(SendError, match="not connected"):
         await dev.send_frame([100, 100, 100], 38000)

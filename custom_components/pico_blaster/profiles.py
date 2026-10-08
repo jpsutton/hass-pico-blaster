@@ -1,5 +1,5 @@
-# Vendored from fire-blaster (https://github.com/jpsutton/fire-blaster),
-# src/fireblaster/profiles.py. Copyright (c) Jared Sutton. MIT License.
+# Copyright (c) Jared Sutton. MIT License.
+# Shared with the author's fire-blaster firmware project (same code, same license).
 """IR code profiles: one TOML file per device code set.
 
     id = "amazon-4495"

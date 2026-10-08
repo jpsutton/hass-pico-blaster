@@ -4,7 +4,7 @@ send_ir:
   target:
     entity:
       domain: remote
-      integration: fire_blaster
+      integration: pico_blaster
   fields:
     code:
       name: Code
@@ -46,4 +46,4 @@ send_ir:
 
 reload_profiles:
   name: Reload profiles
-  description: Re-read the fire-blaster profile TOML files from the profiles directory.
+  description: Re-read the profile TOML files from the profiles directory.

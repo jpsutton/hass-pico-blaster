@@ -11,7 +11,7 @@ import tempfile
 
 import pytest
 
-from custom_components.fire_blaster.irtoy import IrToy
+from custom_components.pico_blaster.irtoy import IrToy
 
 from .fake_irtoy import FakeIrToy, serve_stream
 

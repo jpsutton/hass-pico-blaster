@@ -1,6 +1,6 @@
-"""In-process fake of the fire-blaster Pico IR Toy firmware.
+"""In-process fake of the Pico Blaster stick's IR Toy firmware.
 
-Port of firmware/pico/src/irtoy.c (fire-blaster repo) to Python, wrapped in
+Python port of the firmware's irtoy.c state machine, wrapped in
 asyncio StreamReader/StreamWriter look-alikes so `IrToy` can drive it with
 no serial port.
 """

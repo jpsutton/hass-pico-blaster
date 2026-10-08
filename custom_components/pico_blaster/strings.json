@@ -3,7 +3,7 @@
     "flow_title": "{name} ({port})",
     "step": {
       "user": {
-        "title": "fire-blaster IR blaster",
+        "title": "Pico Blaster",
         "description": "Pick the serial port of the IR stick. The /dev/serial/by-id path is preferred because it survives replugs.",
         "data": {
           "port": "Serial port",
@@ -29,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "fire-blaster IR options",
+        "title": "Pico Blaster options",
         "data": {
           "carrier": "Default carrier (Hz) for pulse-text codes",
           "profiles_dir": "Profiles directory (absolute, or relative to /config)"
@@ -50,7 +50,7 @@
     },
     "reload_profiles": {
       "name": "Reload profiles",
-      "description": "Re-read the fire-blaster profile TOML files."
+      "description": "Re-read the profile TOML files."
     }
   }
 }
