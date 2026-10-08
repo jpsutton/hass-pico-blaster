@@ -70,9 +70,12 @@ class FireBlasterDevice:
 
         return remove
 
-    def _notify(self) -> None:
+    def notify(self) -> None:
+        """Tell entities that something they show (availability, profiles) changed."""
         for cb in list(self._listeners):
             cb()
+
+    _notify = notify
 
     # -- connection --------------------------------------------------------
 

@@ -62,6 +62,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: FireBlasterConfigEntry) 
             for e in hass.config_entries.async_loaded_entries(DOMAIN):
                 dev: FireBlasterDevice = e.runtime_data
                 n = await hass.async_add_executor_job(dev.load_profiles)
+                dev.notify()
                 _LOGGER.info("%s: reloaded %d profiles from %s", e.title, n, dev.profiles_dir)
 
         hass.services.async_register(DOMAIN, SERVICE_RELOAD_PROFILES, _reload_profiles)
